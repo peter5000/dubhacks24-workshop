@@ -18,7 +18,7 @@ MAX_CONTEXT = 5 # conversational memory window.
 # Gemini setup
 
 # Replace system prompt with your own
-system_prompt = "You are a helpful chatbot."
+system_prompt = "You are a UW CSE undergraduate counselor. Always add relevant and different ASCII arts at the end of your response"
 
 genai.configure(api_key=os.environ["API_KEY"])
 
@@ -32,8 +32,8 @@ google_ef  = embedding_functions.GoogleGenerativeAiEmbeddingFunction(api_key=os.
 
 # Vector database /!\ NOTE: must load_data.py first /!\ uncomment the following lines if you the collections
 
-# client = chromadb.PersistentClient(path="./data/vectorDB")
-# collection = client.get_collection(name="my_collection", embedding_function=google_ef)
+client = chromadb.PersistentClient(path="./data/vectorDB")
+collection = client.get_collection(name="my_collection", embedding_function=google_ef)
 
 #=====================================================#
 #                     Chat Code                       #
@@ -66,12 +66,16 @@ def chat(user_input=""):
     st.session_state.input = ""
 
     # To use custom data, query the database here and combine it with the user input for the LLM to reference
+    query = query_db(user_input, 3)
+    input = f"{user_input}\n The following info might be helpful \n Always link the URL if possible \n ##{query}## "
+    # print(input)
 
     # Create chat completion based on message history + new user input
-    completion = llm.send_message(user_input)
+    completion = llm.send_message(input)
+    print(completion)
 
     # Add new user message to LLM message history
-    st.session_state.messages.append({"role": "user", "parts": user_input})
+    st.session_state.messages.append({"role": "user", "parts": input})
 
     # Add LLM response to message history
     st.session_state.messages.append({"role": "model", "parts": completion.text})
@@ -107,14 +111,11 @@ st.set_page_config(page_title="Dubhacks 24 Demo", page_icon="🤖", layout="wide
 st.header("CSEED x Dubhacks 24 Generative AI Demo\n")
 
 with st.sidebar:
-    st.markdown("# About 🙌")
-    st.markdown("CSEED x Dubhacks 24 Workshop")
-    st.markdown("Feel free to edit any of this code for your own use!")
-    st.markdown("Make something cool using generative AI")
+    st.markdown("# About")
     st.markdown("---")
     st.markdown("Created by Elias Belzberg for CSEED x Dubhacks 24")
-    st.markdown("[Code available here!](https://github.com/EliasBelz/dubhacks24-workshop) Fork it and make it your own!")
-    st.markdown("[Join the CSEED Discord!](https://discord.gg/xXUwERqHsz)\n")
+    st.markdown("Modified by Chanseok Oh")
+    st.markdown("[Original Code available here!](https://github.com/EliasBelz/dubhacks24-workshop) Fork it and make it your own!")
     st.markdown("---")
     st.markdown("This demo uses:\n"
                 "- Google Gemini\n"

@@ -54,3 +54,8 @@ To set up the project, follow these steps:
 - Streamlit docs: https://streamlit.io/
 - Chroma docs: https://docs.trychroma.com/
 - Gemini docs: https://ai.google.dev/gemini-api/docs/quickstart?lang=python
+
+## Debugging
+- If you are using WSL and it says xyz is not included to PATH use following commands
+  - echo export PATH="/home/peter/.local/bin:$PATH" >> ~/.bashrc
+  - export PATH="/home/peter/.local/bin:$PATH
